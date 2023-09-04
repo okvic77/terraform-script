@@ -2,10 +2,10 @@ name: Connect to terraform cloud API using the same actions/github-script@v6
 description: |
   Connect to terraform cloud API using the same actions/github-script@v6
 inputs:
-  script:
-    description: 'The script to run.'
+  message:
+    description: 'The message to echo'
     required: true
-    default: 'console.log("Hello, World!");'
+    default: 'New plan from GitHub Actions'
   workspace:
     description: 'The workspace to run.'
     required: true
