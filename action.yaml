@@ -12,6 +12,9 @@ inputs:
   organization:
     description: 'The organization to run.'
     required: true
+  token:
+    description: 'The token to run.'
+    required: true
 
   tag:
     description: 'The tag to run.'
