@@ -1,0 +1,21 @@
+name: Connect to terraform cloud API using the same actions/github-script@v6
+description: |
+  Connect to terraform cloud API using the same actions/github-script@v6
+inputs:
+  script:
+    description: 'The script to run.'
+    required: true
+    default: 'console.log("Hello, World!");'
+  workspace:
+    description: 'The workspace to run.'
+    required: true
+  organization:
+    description: 'The organization to run.'
+    required: true
+
+  tag:
+    description: 'The tag to run.'
+    required: true
+runs:
+  using: node20
+  main: 'index.js'
