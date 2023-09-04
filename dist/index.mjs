@@ -16925,6 +16925,9 @@ async function createRun(workspace, { TOKEN }) {
 }
 
 async function run() {
+  const githubToken = core.getInput("github-token");
+  const { rest } = (0,github.getOctokit)(githubToken);
+
   const TOKEN = core.getInput("token");
   const workspacename = core.getInput("workspace");
   const organization = core.getInput("organization");
@@ -16932,7 +16935,7 @@ async function run() {
 
   const options = { TOKEN };
 
-  const deplymentIssue = await github.rest.issues.create({
+  const deplymentIssue = await rest.issues.create({
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
     title: `Deploying tag ${tag}`,
@@ -16952,7 +16955,7 @@ async function run() {
       organization,
       options
     );
-    const infoComment = await github.rest.issues.createComment({
+    const infoComment = await rest.issues.createComment({
       issue_number: deplymentIssue.data.number,
       owner: github.context.repo.owner,
       repo: github.context.repo.repo,
@@ -16964,14 +16967,14 @@ async function run() {
     const run = await createRun(workspace.data, options);
     console.log("run", JSON.stringify(run, null, 2));
     // Update comment with run link
-    await github.rest.issues.updateComment({
+    await rest.issues.updateComment({
       comment_id: infoComment.data.id,
       owner: github.context.repo.owner,
       repo: github.context.repo.repo,
       body: `Variable set on Terraform Cloud. [Terraform Cloud Run](https://app.terraform.io/app/${organization}/workspaces/${workspacename}/runs/${run.data.id})`,
     });
   } else {
-    await github.rest.issues.createComment({
+    await rest.issues.createComment({
       issue_number: deplymentIssue.data.number,
       owner: github.context.repo.owner,
       repo: github.context.repo.repo,

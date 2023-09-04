@@ -19,6 +19,9 @@ inputs:
   tag:
     description: 'The tag to run.'
     required: true
+  github-token:
+    description: 'The github-token to run.'
+    required: true
 runs:
   using: node20
   main: dist/index.mjs

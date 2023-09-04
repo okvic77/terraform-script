@@ -1,5 +1,5 @@
 import core from "@actions/core";
-import { rest, context } from "@actions/github";
+import { context, getOctokit } from "@actions/github";
 import fetch from "node-fetch";
 
 async function getVariables(workspace, org, { TOKEN }) {
@@ -86,6 +86,9 @@ async function createRun(workspace, { TOKEN }) {
 }
 
 async function run() {
+  const githubToken = core.getInput("github-token");
+  const { rest } = getOctokit(githubToken);
+
   const TOKEN = core.getInput("token");
   const workspacename = core.getInput("workspace");
   const organization = core.getInput("organization");
