@@ -16892,7 +16892,7 @@ async function getWorkspace(workspace, org, { TOKEN }) {
   return variables.json();
 }
 
-async function createRun(workspace, { TOKEN }) {
+async function createRun(workspace, { TOKEN, message, autoApply = false }) {
   const url = new URL(`https://app.terraform.io/api/v2/runs`);
   const body = {
     data: {
@@ -16906,8 +16906,8 @@ async function createRun(workspace, { TOKEN }) {
         },
       },
       attributes: {
-        "auto-apply": false,
-        message: "Update from terraform.mjs",
+        "auto-apply": autoApply,
+        message,
       },
     },
   };
@@ -16931,6 +16931,8 @@ async function run() {
   const TOKEN = core.getInput("token");
   const workspacename = core.getInput("workspace");
   const organization = core.getInput("organization");
+  const message = core.getInput("message");
+  const commitMessage = core.getInput("commit-message") || "";
   const tag = core.getInput("tag");
 
   const options = { TOKEN };
@@ -16964,7 +16966,10 @@ async function run() {
 
     const workspace = await getWorkspace(workspacename, organization, options);
     console.log("workspace", JSON.stringify(workspace, null, 2));
-    const run = await createRun(workspace.data, options);
+
+    // We auto aply only if the commit message contains [auto-apply]
+    const autoApply = commitMessage?.includes("auto-apply");
+    const run = await createRun(workspace.data, { ...options, message, autoApply });
     console.log("run", JSON.stringify(run, null, 2));
     // Update comment with run link
     await rest.issues.updateComment({
