@@ -22,6 +22,9 @@ inputs:
   github-token:
     description: 'The github-token to run.'
     required: true
+  commit-message:
+    description: 'The commit-message to run.'
+    required: true
 runs:
   using: node20
   main: dist/index.mjs
