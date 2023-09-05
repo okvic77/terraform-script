@@ -16934,6 +16934,7 @@ async function run() {
   const message = core.getInput("message");
   const commitMessage = core.getInput("commit-message") || "";
   const tag = core.getInput("tag");
+  const autoApply = core.getInput("auto-apply") === "true";;
 
   const options = { TOKEN };
 
@@ -16968,7 +16969,6 @@ async function run() {
     console.log("workspace", JSON.stringify(workspace, null, 2));
 
     // We auto aply only if the commit message contains [auto-apply]
-    const autoApply = commitMessage?.includes("auto-apply");
     const run = await createRun(workspace.data, { ...options, message, autoApply });
     console.log("run", JSON.stringify(run, null, 2));
     // Update comment with run link

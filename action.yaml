@@ -15,6 +15,10 @@ inputs:
   token:
     description: 'The token to run.'
     required: true
+  auto-apply:
+    description: 'The auto-apply to run.'
+    required: true
+    default: 'false'
 
   tag:
     description: 'The tag to run.'
