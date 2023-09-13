@@ -85,6 +85,31 @@ async function createRun(workspace, { TOKEN, message, autoApply = false }) {
   return variables.json();
 }
 
+async function waitForRun(run, { TOKEN }) {
+  const url = new URL(`https://app.terraform.io/api/v2/runs/${run.id}`);
+  const startTime = Date.now();
+  do {
+    const data = await fetch(url.toString(), {
+      headers: {
+        Authorization: `Bearer ${TOKEN}`,
+        "Content-Type": "application/vnd.api+json",
+      },
+    });
+  
+    const runData = await data.json();
+    if (runData.data.attributes.status === "planned_and_finished") {
+      return runData;
+    }
+    // Log status
+    console.log("run status", runData.data.attributes.status);
+    await new Promise((resolve) => setTimeout(resolve, 1000 * 10));
+
+    // If we are still running after 5 minutes, we fail
+  } while (
+    Date.now() - startTime < 5 * 60 * 1000
+  );
+}
+
 async function run() {
   const githubToken = core.getInput("github-token");
   const { rest } = getOctokit(githubToken);
@@ -132,6 +157,10 @@ async function run() {
     // We auto aply only if the commit message contains [auto-apply]
     const run = await createRun(workspace.data, { ...options, message, autoApply });
     console.log("run", JSON.stringify(run, null, 2));
+
+    if (autoApply) {
+      await waitForRun(run.data, options);
+    }
     // Update comment with run link
     await rest.issues.updateComment({
       comment_id: infoComment.data.id,
